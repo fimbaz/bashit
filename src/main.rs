@@ -4,20 +4,16 @@ use std::io::{self, BufRead, Read};
 
 fn main() -> io::Result<()> {
     let re = Regex::new(r"\(\(MBHIST\)\)(.*)\(\(MBHISTEND\)\)").unwrap();
-    let mut buffer = String::new();
-    let mut stdin = io::stdin(); // We get `Stdin` here.
+    let stdin = io::stdin(); // We get `Stdin` here.
     for maybe_line in stdin.lock().lines() {
         match maybe_line {
-            Ok(line) => {
-                match re.captures(&line) {
-                    Some(capture) => {
-                        let history_item = capture.get(1).unwrap().as_str();
-                        println!("{}", history_item);
-                    }
-                    None => continue,
+            Ok(line) => match re.captures(&line) {
+                Some(capture) => {
+                    let history_item = capture.get(1).unwrap().as_str();
+                    println!("{}", history_item);
                 }
-                println!("{}", re.captures(&line).unwrap().get(1).unwrap().as_str());
-            }
+                None => continue,
+            },
             Err(_) => return Ok(()),
         }
     }
