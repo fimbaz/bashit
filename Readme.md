@@ -17,6 +17,6 @@ Constraints:
 
 Approach:
   * Using bashit, when you ssh to a server the output of your terminal is teed to a small process.
-  * a custom PROMPT_COMMAND emits each history item to stdout each time the user hits 'enter'
+  * a custom PROMPT_COMMAND on the remote emits each history item to stdout each time the user hits 'enter'
   * The PROMPT_COMMAND also deletes the emitted history item from the screen by messing with the cursor.
   * Back on the local machine, the aforementioned small process sees the history item and emits it to a file.
