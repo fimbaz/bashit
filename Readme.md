@@ -4,9 +4,9 @@ Instructions:
 
 1. install rust
 2. run make
-source ~/.bashrc
-ssh to anywhere
-observe your history back at home in ~/.bash_universal_history.
+3. source ~/.bashrc
+4. ssh to anywhere
+5. observe your history back at home in ~/.bash_universal_history.
 
 What? - a tool to locally save commands typed in remote terminal sessions.
 Constraints:
