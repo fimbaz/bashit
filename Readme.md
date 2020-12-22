@@ -9,6 +9,7 @@ Instructions:
 5. observe your history back at home in ~/.bash_universal_history.
 
 What? - a tool to locally save commands typed in remote terminal sessions.
+
 Constraints:
  * Can't require special permissions or configuration on the host
  * Can't open any new sockets
