@@ -1,3 +1,8 @@
 #!/bin/bash
 DIR=/usr/local/bin/
-ssh -t "$@" $(cat $DIR/prompt_command.bash) bash | tee >($DIR/bashit >> $HOME/.bash_universal_history)
+rm -f ~/comm
+mkfifo ~/comm
+stty -echo raw
+cat -u ~/comm | ssh -tt "$@" $(cat $DIR/prompt_command.bash) bash -i | tee >($DIR/bashit >> $HOME/.bash_universal_history)&
+cat -u - < /dev/stdin > ~/comm
+reset
