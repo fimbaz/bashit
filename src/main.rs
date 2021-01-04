@@ -1,7 +1,7 @@
 #[macro_use] extern crate lazy_static;
-use regex::{Regex,RegexSet};
+use regex::{Regex};
 use resiter::while_ok::*;
-use std::io::{self, BufRead, Read};
+use std::io::{self, BufRead};
 
 #[derive(Debug)]
 struct History {
@@ -38,7 +38,16 @@ fn main() -> io::Result<()> {
     let stdin = io::stdin();
     let lines = stdin.lock().lines();
     lines.while_ok(|l|{
-        println!("{:?}",process_line(&l));
-    });;
+        if let Some(termline) = process_line(&l) {
+            match termline {
+                TerminalLine::History(history) => {
+                    println!("{:?}",history);
+                },
+                TerminalLine::Command(command) => {
+                    println!("{:?}",command);
+                }
+            }
+        }
+    }).unwrap();
     Ok(())
 }
