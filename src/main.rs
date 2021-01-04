@@ -1,23 +1,53 @@
-use regex::Regex;
+#[macro_use] extern crate lazy_static;
+use regex::{Regex};
 use resiter::while_ok::*;
-use std::io::{self, BufRead, Read};
+use std::io::{self, BufRead};
 
-fn main() -> io::Result<()> {
-    let re = Regex::new(r"\(\(MBHIST\)\)(.*)\(\(MBHISTEND\)\)").unwrap();
-    let stdin = io::stdin(); // We get `Stdin` here.
-    for maybe_line in stdin.lock().lines() {
-        match maybe_line {
-            Ok(line) => match re.captures(&line) {
-                Some(capture) => {
-                    let history_item = capture.get(1).unwrap().as_str();
-                    println!("{}", history_item);
-                }
-                None => continue,
-            },
-            Err(_) => return Ok(()),
-        }
+#[derive(Debug)]
+struct History {
+    raw: String,
+    matched: String
+}
+
+#[derive(Debug)]
+struct Command {
+    raw: String,
+    matched: String
+}
+
+#[derive(Debug)]
+enum TerminalLine {
+    History(History),
+    Command(Command)
+}
+
+fn process_line(line: &str) -> Option<TerminalLine> {
+    lazy_static! {
+        static ref REHIST: Regex  = Regex::new(r"\(\(MBHIST\)\)(.*)\(\(MBHISTEND\)\)").unwrap();
+        static ref RECMD: Regex  = Regex::new(r"\(\(MBCMD\)\)(.*)\(\(MBCMDEND\)\)").unwrap();
     }
-
+    if let Some(caps) = REHIST.captures(line){
+        return Some( TerminalLine::History(History {raw: line.to_string(), matched: caps.get(1).unwrap().as_str().to_string() }))
+    }
+    if let Some(caps) = RECMD.captures(line){
+        return Some( TerminalLine::Command(Command {raw: line.to_string(), matched: caps.get(1).unwrap().as_str().to_string() }))
+    }
+    None
+}
+fn main() -> io::Result<()> {
+    let stdin = io::stdin();
+    let lines = stdin.lock().lines();
+    lines.while_ok(|l|{
+        if let Some(termline) = process_line(&l) {
+            match termline {
+                TerminalLine::History(history) => {
+                    println!("{}",&history.matched);
+                },
+                TerminalLine::Command(command) => {
+                    println!("{}",&command.matched);
+                }
+            }
+        }
+    }).unwrap();
     Ok(())
 }
-//	 if let Some(captures) = re.captures(&line){
