@@ -1,8 +1,8 @@
 #!/bin/bash
 DIR=/usr/local/bin/
 mkdir -p ~/.bashit
-rm -f ~/.bashit/comm ~/.bashit/cmd
-mkfifo ~/.bashit/cmd ~/.bashit/comm
+rm -f ~/.bashit/comm
+mkfifo ~/.bashit/comm
 stty -echo raw
 set +e
 cat -u ~/.bashit/comm | ssh -tt "$@" $(cat $DIR/prompt_command.bash) bash -i | \
@@ -16,6 +16,5 @@ cat -u ~/.bashit/comm | ssh -tt "$@" $(cat $DIR/prompt_command.bash) bash -i | \
                    echo " openssl enc -base64 -d <<< $(openssl enc -base64 <<< $($MATCH))"  >&3
                fi
            done)&
-#tee >($DIR/bashit >> $HOME/.bash_universal_history)&
 cat -u - < /dev/stdin > ~/.bashit/comm
 reset
